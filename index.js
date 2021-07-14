@@ -25,10 +25,27 @@ var pluckPokemonNamesFromFileAsync = function(filePath) {
       }
     });
   };
-  var pokemonPromises = [];
 
-
+//brute force 
+pluckPokemonNamesFromFileAsync(filename).then(function(pokemonNames) {
+    fetch('https://pokeapi.co/api/v2/pokemon/' + pokemonNames[0])
+    .then(response => response.json())
+      .then(data => {
+        var pokemonTypes = data.types.map(element => element.type.name);
+        var obj = {};
+        obj[pokemonNames[0]]  = pokemonTypes;
+        console.log(obj);
+      })
+        .catch(err => console.log(err));
   
-// fetch('http://example.com/movies.json')
-//        .then(response => response.json())
-//          .then(data => console.log(data));)})
+  fetch('https://pokeapi.co/api/v2/pokemon/' + pokemonNames[1])
+    .then(response => response.json())
+      .then(data => {
+        var pokemonTypes = data.types.map(element => element.type.name);
+        var obj = {};
+        obj[pokemonNames[1]]  = pokemonTypes;
+        console.log(obj);
+      })
+        .catch(err => console.log(err));  
+})
+  .catch(err => console.log(err)); 

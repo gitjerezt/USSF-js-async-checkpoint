@@ -11,7 +11,7 @@ if (filename === undefined) {
   return;    
 }
 var pluckPokemonNamesFromFileAsync = function(filePath) {
-    return new Promise(function (resolve, reject){
+  return new Promise(function (resolve, reject){
       try{
         fs.readFile(filePath, 'utf8', function (err, content) {
           //console.log('Example from callbackReview.js')
@@ -20,7 +20,6 @@ var pluckPokemonNamesFromFileAsync = function(filePath) {
             reject(err);
           } else {
             content = content.split('\n');
-            //console.log('fs.readFile successfully completed :', content);
             resolve(content);
           }
         });
@@ -28,29 +27,30 @@ var pluckPokemonNamesFromFileAsync = function(filePath) {
       catch(err){
         reject(err)
       }
-    });
-  };
-  var pokemonPromises = [];
-
+  });
+};
+var pokemonWithTypesList;
 pluckPokemonNamesFromFileAsync(filename).then(function(pokemonNames) {
-    fetch('https://pokeapi.co/api/v2/pokemon/' + pokemonNames[0])
+  var pokemonPromises = [];
+  pokemonNames.forEach(function(name, index) {
+    pokemonPromises[index]= fetch('https://pokeapi.co/api/v2/pokemon/' + name)
     .then(response => response.json())
-      .then(data => {
+      .then(function(data) {
         var pokemonTypes = data.types.map(element => element.type.name);
-        var obj = {};
-        obj[pokemonNames[0]]  = pokemonTypes;
-        console.log(obj);
+        var pokemonObj = {};
+        pokemonObj['name']  = name;
+        pokemonObj['type']  = pokemonTypes;
+        return pokemonObj;
       })
-        .catch(err => console.log(err));
-  
-  fetch('https://pokeapi.co/api/v2/pokemon/' + pokemonNames[1])
-    .then(response => response.json())
-      .then(data => {
-        var pokemonTypes = data.types.map(element => element.type.name);
-        var obj = {};
-        obj[pokemonNames[1]]  = pokemonTypes;
-        console.log(obj);
-      })
-        .catch(err => console.log(err));  
+        .catch(err => console.log(err));      
+  });
+  Promise.all(pokemonPromises)
+    .then(function(pokemonObjects) {
+      pokemonWithTypesList = pokemonObjects
+      pokemonWithTypesList.forEach(function(element) {
+        var str = element['name'] + ': ' + element['type'].join(', ');
+        console.log(str);
+      });
+    });
 })
-  .catch(err => console.log(err)); 
+.catch(err => console.log(err)); 
