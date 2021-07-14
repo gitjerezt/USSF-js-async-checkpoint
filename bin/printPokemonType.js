@@ -5,6 +5,11 @@ var Promise = require('bluebird');
 const fs = require('fs');
 
 var filename = process.argv[2];
+
+if (filename === undefined) {
+  console.log('Error: File must be passed as an arg e.g. $printPokemonType index.txt');
+  return;    
+}
 var pluckPokemonNamesFromFileAsync = function(filePath) {
     return new Promise(function (resolve, reject){
       try{
