@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 var Promise = require('bluebird');
 const fs = require('fs');
 
-var filePath = 'index.txt';
+var filename = process.argv[2];
 var pluckPokemonNamesFromFileAsync = function(filePath) {
     return new Promise(function (resolve, reject){
       try{
@@ -27,8 +27,5 @@ var pluckPokemonNamesFromFileAsync = function(filePath) {
   };
   var pokemonPromises = [];
 
-
+console.log(filename);
   
-// fetch('http://example.com/movies.json')
-//        .then(response => response.json())
-//          .then(data => console.log(data));)})
